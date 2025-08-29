@@ -14,6 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import { Lock, Unlock } from "lucide-react";
 import type { FileWithPreview } from "@/hooks/use-file-upload";
 import { useDebounce } from "@/hooks/use-debounce";
+import NumberSelector from "@/components/common/number-selector";
 
 const ImageResizerCompressor = () => {
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
@@ -42,7 +43,18 @@ const ImageResizerCompressor = () => {
 
   // Handle file upload & generate preview
   const handleFileChange = (files: FileWithPreview[]) => {
-    if (!files.length) return;
+    if (!files.length) {
+      // ✅ If no files, reset everything
+      setUploadedFiles([]);
+      setPreviewUrl(null);
+      setOriginalImage(null);
+      setSizes({
+        original: "N/A",
+        current: "N/A",
+        compressed: "N/A",
+      });
+      return;
+    }
     const file = files[0];
     const preview = URL.createObjectURL(file.file);
 
@@ -55,13 +67,36 @@ const ImageResizerCompressor = () => {
     img.onload = () => {
       setOriginalImage(img);
       setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-      setSizes({
+
+      // ✅ Correctly set original size
+      setSizes((prev) => ({
+        ...prev,
         original: sizeFormat(file.file.size),
-        current: sizeFormat(file.file.size),
-        compressed: "N/A",
-      });
+      }));
     };
   };
+
+  // const handleFileChange = (files: FileWithPreview[]) => {
+  //   if (!files.length) return;
+  //   const file = files[0];
+  //   const preview = URL.createObjectURL(file.file);
+
+  //   setUploadedFiles([{ ...file, preview }]);
+  //   setPreviewUrl(preview);
+
+  //   const img = new Image();
+  //   img.src = preview;
+
+  //   img.onload = () => {
+  //     setOriginalImage(img);
+  //     setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+  //     setSizes({
+  //       original: sizeFormat(file.file.size),
+  //       current: sizeFormat(file.file.size),
+  //       compressed: "N/A",
+  //     });
+  //   };
+  // };
 
   // Resize + Compress using Canvas
   const resizeAndCompress = (compressing = false) => {
@@ -86,7 +121,8 @@ const ImageResizerCompressor = () => {
         setSizes((prev) => ({
           ...prev,
           current: sizeFormat(blob.size),
-          compressed: compressing ? sizeFormat(blob.size) : prev.compressed,
+          // compressed: compressing ? sizeFormat(blob.size) : prev.compressed,
+          compressed: sizeFormat(blob.size),
         }));
       },
       "image/jpeg",
@@ -95,8 +131,9 @@ const ImageResizerCompressor = () => {
   };
 
   // Update width
-  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newWidth = parseInt(e.target.value) || 0;
+  // const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleWidthChange = (newWidth: number) => {
+    // const newWidth = parseInt(e.target.value) || 0;
     setDimensions((prev) => ({
       width: newWidth,
       height: aspectLocked
@@ -109,8 +146,9 @@ const ImageResizerCompressor = () => {
   };
 
   // Update height
-  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newHeight = parseInt(e.target.value) || 0;
+  // const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeightChange = (newHeight: number) => {
+    // const newHeight = parseInt(e.target.value) || 0;
     setDimensions((prev) => ({
       width: aspectLocked
         ? Math.floor(
@@ -129,7 +167,7 @@ const ImageResizerCompressor = () => {
       width: originalImage.naturalWidth,
       height: originalImage.naturalHeight,
     });
-    setQuality(1);
+    setQuality(90);
     resizeAndCompress(true);
   };
 
@@ -142,12 +180,8 @@ const ImageResizerCompressor = () => {
     link.click();
   };
 
-  // Re-render on dimension or quality change
-  // Debounce effect for resizing & compression
-
-  // Debounced states
-  const debouncedDimensions = useDebounce(dimensions, 1000);
-  const debouncedQuality = useDebounce(quality, 1000);
+  const debouncedDimensions = useDebounce(dimensions, 800);
+  const debouncedQuality = useDebounce(quality, 800);
 
   useEffect(() => {
     if (originalImage) {
@@ -184,20 +218,29 @@ const ImageResizerCompressor = () => {
                   <img
                     src={previewUrl}
                     alt="Preview"
-                    className="w-full rounded-lg shadow-md border"
+                    className="w-full max-sm:max-h-[225px] lg:max-h-[675px] rounded-lg shadow-md border bg-gray-200 object-cover"
                   />
                 </div>
               )}
 
               {/* Resize Inputs */}
               <div className="flex flex-col sm:flex-row gap-4 items-center">
-                <div className="flex flex-col w-full">
+                <div className="flex flex-col gap-2 w-full">
                   <Label htmlFor="width">Width (px)</Label>
-                  <Input
+                  {/* <Input
                     id="width"
                     type="number"
                     value={dimensions.width}
                     onChange={handleWidthChange}
+                  /> */}
+
+                  <NumberSelector
+                    defaultValue={dimensions.width}
+                    onChange={(newWidth: number) => handleWidthChange(newWidth)}
+                    value={dimensions.width}
+                    maxValue={originalImage?.naturalWidth || 10000}
+                    minValue={1}
+                    step={1}
                   />
                 </div>
 
@@ -205,22 +248,34 @@ const ImageResizerCompressor = () => {
                   className="cursor-pointer mt-6"
                   onClick={() => setAspectLocked(!aspectLocked)}
                 >
-                  {aspectLocked ? <Lock size={24} /> : <Unlock size={24} />}
+                  <Button variant={`${aspectLocked ? "default" : "outline"}`}>
+                    {aspectLocked ? <Lock size={24} /> : <Unlock size={24} />}
+                  </Button>
                 </div>
 
-                <div className="flex flex-col w-full">
+                <div className="flex flex-col gap-2  w-full">
                   <Label htmlFor="height">Height (px)</Label>
-                  <Input
+                  <NumberSelector
+                    defaultValue={dimensions.height}
+                    onChange={(newHeight: number) =>
+                      handleHeightChange(newHeight)
+                    }
+                    value={dimensions.height}
+                    maxValue={originalImage?.naturalHeight || 10000}
+                    minValue={1}
+                    step={1}
+                  />
+                  {/* <Input
                     id="height"
                     type="number"
                     value={dimensions.height}
                     onChange={handleHeightChange}
-                  />
+                  /> */}
                 </div>
               </div>
 
               {/* Compression Slider */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-4">
                 <Label>Quality ({quality}%)</Label>
                 <Slider
                   value={[quality]}
