@@ -27,8 +27,7 @@ const LazyButton: React.FC<LazyButtonProps> = ({
     <Suspense
       fallback={
         <Skeleton className={buttonVariants({ size, className })} style={{ height, width }} />
-      }
-    >
+      }>
       <Button
         {...props}
         size={size}

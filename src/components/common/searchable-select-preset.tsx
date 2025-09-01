@@ -35,8 +35,7 @@ export function SearchableSelectPreset({ value, onValueChange }: SearchableSelec
                   key={preset.name}
                   value={preset.name}
                   onSelect={() => onValueChange(preset.name)}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
+                  className="flex items-center gap-2 cursor-pointer">
                   <CheckIcon
                     className={`h-4 w-4 ${value === preset.name ? 'opacity-100' : 'opacity-0'}`}
                   />

@@ -13,8 +13,8 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Lock, Unlock } from 'lucide-react';
 import Compressor from 'compressorjs';
-import type { FileWithPreview } from '@/hooks/use-file-upload';
 import { useDebounce } from '@/hooks/use-debounce';
+import type { FileWithPreview } from '@/types';
 
 const ImageCompressor = () => {
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
@@ -51,7 +51,10 @@ const ImageCompressor = () => {
     }
 
     const file = files[0];
-    const preview = URL.createObjectURL(file.file);
+    const preview =
+      file.file instanceof File
+        ? URL.createObjectURL(file.file)
+        : (file.file as { url: string }).url;
     setUploadedFiles([{ ...file, preview }]);
     setPreviewUrl(preview);
 
@@ -67,7 +70,9 @@ const ImageCompressor = () => {
         original: sizeFormat(file.file.size)
       }));
 
-      compressImage(file.file);
+      if (file.file instanceof File) {
+        compressImage(file.file);
+      }
     };
   };
 
@@ -202,8 +207,7 @@ const ImageCompressor = () => {
 
             <div
               className="cursor-pointer mt-6 max-sm:mt-3"
-              onClick={() => setAspectLocked(!aspectLocked)}
-            >
+              onClick={() => setAspectLocked(!aspectLocked)}>
               <Button variant={`${aspectLocked ? 'default' : 'outline'}`}>
                 {aspectLocked ? <Lock size={24} /> : <Unlock size={24} />}
               </Button>

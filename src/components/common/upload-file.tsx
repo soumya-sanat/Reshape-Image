@@ -12,8 +12,9 @@ import {
   XIcon
 } from 'lucide-react';
 
-import { formatBytes, useFileUpload, type FileUploadOptions } from '@/hooks/use-file-upload';
+import { formatBytes, useFileUpload } from '@/hooks/use-file-upload';
 import { Button } from '@/components/ui/button';
+import type { FileUploadOptions } from '@/types';
 
 const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
   const fileType = file.file instanceof File ? file.file.type : file.file.type;
@@ -142,8 +143,7 @@ export default function UploadFile({
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
-        className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
-      >
+        className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]">
         <input {...getInputProps()} className="sr-only" aria-label="Upload image file" />
         {files.length > 0 ? (
           <div className="flex w-full flex-col gap-3">
@@ -165,15 +165,13 @@ export default function UploadFile({
               {files.map((file) => (
                 <div
                   key={file.id}
-                  className="bg-background relative flex flex-col rounded-md border"
-                >
+                  className="bg-background relative flex flex-col rounded-md border">
                   {getFilePreview(file)}
                   <Button
                     onClick={() => removeFile(file.id)}
                     size="icon"
                     className=" bg-red-500 border-background focus-visible:border-background absolute -top-2 -right-2 size-6 rounded-full border-2 shadow-none"
-                    aria-label="Remove image"
-                  >
+                    aria-label="Remove image">
                     <XIcon className="size-3.5" />
                   </Button>
                   <div className="flex min-w-0 flex-col gap-0.5 border-t p-3">
@@ -190,8 +188,7 @@ export default function UploadFile({
           <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
             <div
               className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
-              aria-hidden="true"
-            >
+              aria-hidden="true">
               <ImageIcon className="size-4 opacity-60" />
             </div>
             <p className="mb-1.5 text-sm font-medium">Drop your files here</p>

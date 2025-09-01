@@ -1,6 +1,4 @@
-'use client';
-
-import type React from 'react';
+import type { FileMetadata, FileUploadActions, FileUploadOptions, FileUploadState, FileWithPreview } from '@/types';
 import {
   useCallback,
   useRef,
@@ -10,53 +8,8 @@ import {
   type InputHTMLAttributes
 } from 'react';
 
-export type FileMetadata = {
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-  id: string;
-};
 
-export type FileWithPreview = {
-  file: File | FileMetadata;
-  id: string;
-  preview?: string;
-};
 
-export type FileUploadOptions = {
-  maxFiles?: number; // Only used when multiple is true, defaults to Infinity
-  maxSize?: number; // in bytes
-  accept?: string;
-  multiple?: boolean; // Defaults to false
-  initialFiles?: FileMetadata[];
-  onFilesChange?: (files: FileWithPreview[]) => void; // Callback when files change
-  onFilesAdded?: (addedFiles: FileWithPreview[]) => void; // Callback when new files are added
-};
-
-export type FileUploadState = {
-  files: FileWithPreview[];
-  isDragging: boolean;
-  errors: string[];
-};
-
-export type FileUploadActions = {
-  addFiles: (files: FileList | File[]) => void;
-  removeFile: (id: string) => void;
-  clearFiles: () => void;
-  clearErrors: () => void;
-  handleDragEnter: (e: DragEvent<HTMLElement>) => void;
-  handleDragLeave: (e: DragEvent<HTMLElement>) => void;
-  handleDragOver: (e: DragEvent<HTMLElement>) => void;
-  handleDrop: (e: DragEvent<HTMLElement>) => void;
-  handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  openFileDialog: () => void;
-  getInputProps: (
-    props?: InputHTMLAttributes<HTMLInputElement>
-  ) => InputHTMLAttributes<HTMLInputElement> & {
-    ref: React.Ref<HTMLInputElement>;
-  };
-};
 
 export const useFileUpload = (
   options: FileUploadOptions = {}
