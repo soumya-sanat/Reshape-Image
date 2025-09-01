@@ -9,15 +9,11 @@ import {
   Trash2Icon,
   UploadIcon,
   VideoIcon,
-  XIcon,
-} from "lucide-react";
+  XIcon
+} from 'lucide-react';
 
-import {
-  formatBytes,
-  useFileUpload,
-  type FileUploadOptions,
-} from "@/hooks/use-file-upload";
-import { Button } from "@/components/ui/button";
+import { formatBytes, useFileUpload, type FileUploadOptions } from '@/hooks/use-file-upload';
+import { Button } from '@/components/ui/button';
 
 const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
   const fileType = file.file instanceof File ? file.file.type : file.file.type;
@@ -27,39 +23,37 @@ const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
     pdf: {
       icon: FileTextIcon,
       conditions: (type: string, name: string) =>
-        type.includes("pdf") ||
-        name.endsWith(".pdf") ||
-        type.includes("word") ||
-        name.endsWith(".doc") ||
-        name.endsWith(".docx"),
+        type.includes('pdf') ||
+        name.endsWith('.pdf') ||
+        type.includes('word') ||
+        name.endsWith('.doc') ||
+        name.endsWith('.docx')
     },
     archive: {
       icon: FileArchiveIcon,
       conditions: (type: string, name: string) =>
-        type.includes("zip") ||
-        type.includes("archive") ||
-        name.endsWith(".zip") ||
-        name.endsWith(".rar"),
+        type.includes('zip') ||
+        type.includes('archive') ||
+        name.endsWith('.zip') ||
+        name.endsWith('.rar')
     },
     excel: {
       icon: FileSpreadsheetIcon,
       conditions: (type: string, name: string) =>
-        type.includes("excel") ||
-        name.endsWith(".xls") ||
-        name.endsWith(".xlsx"),
+        type.includes('excel') || name.endsWith('.xls') || name.endsWith('.xlsx')
     },
     video: {
       icon: VideoIcon,
-      conditions: (type: string) => type.includes("video/"),
+      conditions: (type: string) => type.includes('video/')
     },
     audio: {
       icon: HeadphonesIcon,
-      conditions: (type: string) => type.includes("audio/"),
+      conditions: (type: string) => type.includes('audio/')
     },
     image: {
       icon: ImageIcon,
-      conditions: (type: string) => type.startsWith("image/"),
-    },
+      conditions: (type: string) => type.startsWith('image/')
+    }
   };
 
   for (const { icon: Icon, conditions } of Object.values(iconMap)) {
@@ -71,23 +65,17 @@ const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
   return <FileIcon className="size-5 opacity-60" />;
 };
 
-const getFilePreview = (file: {
-  file: File | { type: string; name: string; url?: string };
-}) => {
+const getFilePreview = (file: { file: File | { type: string; name: string; url?: string } }) => {
   const fileType = file.file instanceof File ? file.file.type : file.file.type;
   const fileName = file.file instanceof File ? file.file.name : file.file.name;
 
   const renderImage = (src: string) => (
-    <img
-      src={src}
-      alt={fileName}
-      className="size-full rounded-t-[inherit] object-cover"
-    />
+    <img src={src} alt={fileName} className="size-full rounded-t-[inherit] object-cover" />
   );
 
   return (
     <div className="bg-accent flex aspect-square items-center justify-center overflow-hidden rounded-t-[inherit]">
-      {fileType.startsWith("image/") ? (
+      {fileType.startsWith('image/') ? (
         file.file instanceof File ? (
           (() => {
             const previewUrl = URL.createObjectURL(file.file);
@@ -112,7 +100,7 @@ export default function UploadFile({
   multiple,
   initialFiles,
   onFilesChange,
-  onFilesAdded,
+  onFilesAdded
 }: FileUploadOptions) {
   const maxSizeMB = maxSize ? Math.round(maxSize / (1024 * 1024)) : 5;
   const [
@@ -125,25 +113,23 @@ export default function UploadFile({
       openFileDialog,
       removeFile,
       clearFiles,
-      getInputProps,
-    },
+      getInputProps
+    }
   ] = useFileUpload({
     multiple: multiple ?? false,
     maxFiles: maxFiles,
     maxSize: maxSize,
-    accept:
-      accept ??
-      "image/*,application/pdf,audio/*,video/*,.doc,.docx,.xls,.xlsx,.zip,.rar",
+    accept: accept ?? 'image/*,application/pdf,audio/*,video/*,.doc,.docx,.xls,.xlsx,.zip,.rar',
 
     initialFiles: initialFiles,
     onFilesAdded: (addedFiles) => {
-      console.log("Files added:", addedFiles);
+      // console.log("Files added:", addedFiles);
       onFilesAdded?.(addedFiles);
     },
     onFilesChange: (updatedFiles) => {
-      console.log("Files updated:", updatedFiles);
+      // console.log("Files updated:", updatedFiles);
       onFilesChange?.(updatedFiles);
-    },
+    }
   });
 
   return (
@@ -158,30 +144,18 @@ export default function UploadFile({
         data-files={files.length > 0 || undefined}
         className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
       >
-        <input
-          {...getInputProps()}
-          className="sr-only"
-          aria-label="Upload image file"
-        />
+        <input {...getInputProps()} className="sr-only" aria-label="Upload image file" />
         {files.length > 0 ? (
           <div className="flex w-full flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="truncate text-sm font-medium">
-                Files ({files.length})
-              </h3>
+              <h3 className="truncate text-sm font-medium">Files ({files.length})</h3>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={openFileDialog}>
-                  <UploadIcon
-                    className="-ms-0.5 size-3.5 opacity-60"
-                    aria-hidden="true"
-                  />
+                  <UploadIcon className="-ms-0.5 size-3.5 opacity-60" aria-hidden="true" />
                   Add files
                 </Button>
                 <Button variant="outline" size="sm" onClick={clearFiles}>
-                  <Trash2Icon
-                    className="-ms-0.5 size-3.5 opacity-60"
-                    aria-hidden="true"
-                  />
+                  <Trash2Icon className="-ms-0.5 size-3.5 opacity-60" aria-hidden="true" />
                   Remove all
                 </Button>
               </div>
@@ -203,9 +177,7 @@ export default function UploadFile({
                     <XIcon className="size-3.5" />
                   </Button>
                   <div className="flex min-w-0 flex-col gap-0.5 border-t p-3">
-                    <p className="truncate text-[13px] font-medium">
-                      {file.file.name}
-                    </p>
+                    <p className="truncate text-[13px] font-medium">{file.file.name}</p>
                     <p className="text-muted-foreground truncate text-xs">
                       {formatBytes(file.file.size)}
                     </p>
@@ -235,28 +207,11 @@ export default function UploadFile({
       </div>
 
       {errors.length > 0 && (
-        <div
-          className="text-destructive flex items-center gap-1 text-xs"
-          role="alert"
-        >
+        <div className="text-destructive flex items-center gap-1 text-xs" role="alert">
           <AlertCircleIcon className="size-3 shrink-0" />
           <span>{errors[0]}</span>
         </div>
       )}
-
-      {/* <p
-        aria-live="polite"
-        role="region"
-        className="text-muted-foreground mt-2 text-center text-xs"
-      >
-        Mixed content w/ card ∙{" "}
-        <a
-          href="https://github.com/origin-space/originui/tree/main/docs/use-file-upload.md"
-          className="hover:text-foreground underline"
-        >
-          API
-        </a>
-      </p> */}
     </div>
   );
 }

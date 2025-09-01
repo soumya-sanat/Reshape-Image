@@ -1,42 +1,29 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  AtSignIcon,
-  CheckIcon,
-  EyeIcon,
-  EyeOffIcon,
-  User,
-  XIcon,
-} from "lucide-react";
-import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { AtSignIcon, CheckIcon, EyeIcon, EyeOffIcon, User, XIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const SignupForm = () => {
   const navigate = useNavigate();
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState);
 
   const checkStrength = (pass: string) => {
     const requirements = [
-      { regex: /.{8,}/, text: "At least 8 characters" },
-      { regex: /[0-9]/, text: "At least 1 number" },
-      { regex: /[a-z]/, text: "At least 1 lowercase letter" },
-      { regex: /[A-Z]/, text: "At least 1 uppercase letter" },
+      { regex: /.{8,}/, text: 'At least 8 characters' },
+      { regex: /[0-9]/, text: 'At least 1 number' },
+      { regex: /[a-z]/, text: 'At least 1 lowercase letter' },
+      { regex: /[A-Z]/, text: 'At least 1 uppercase letter' }
     ];
 
     return requirements.map((req) => ({
       met: req.regex.test(pass),
-      text: req.text,
+      text: req.text
     }));
   };
 
@@ -47,26 +34,24 @@ const SignupForm = () => {
   }, [strength]);
 
   const getStrengthColor = (score: number) => {
-    if (score === 0) return "bg-border";
-    if (score <= 1) return "bg-red-500";
-    if (score <= 2) return "bg-orange-500";
-    if (score === 3) return "bg-amber-500";
-    return "bg-emerald-500";
+    if (score === 0) return 'bg-border';
+    if (score <= 1) return 'bg-red-500';
+    if (score <= 2) return 'bg-orange-500';
+    if (score === 3) return 'bg-amber-500';
+    return 'bg-emerald-500';
   };
 
   const getStrengthText = (score: number) => {
-    if (score === 0) return "Enter a password";
-    if (score <= 2) return "Weak password";
-    if (score === 3) return "Medium password";
-    return "Strong password";
+    if (score === 0) return 'Enter a password';
+    if (score <= 2) return 'Weak password';
+    if (score === 3) return 'Medium password';
+    return 'Strong password';
   };
 
   return (
     <Card className="flex flex-col w-xl max-md:w-sm px-4 py-6 shadow-lg">
       <CardHeader className="text-start px-4 sm:px-6">
-        <CardTitle className="text-xl sm:text-2xl font-bold">
-          Create your account
-        </CardTitle>
+        <CardTitle className="text-xl sm:text-2xl font-bold">Create your account</CardTitle>
         <CardDescription className="text-sm sm:text-base">
           Enter your email and password to create a new account.
         </CardDescription>
@@ -119,7 +104,7 @@ const SignupForm = () => {
                   id="password"
                   className="pe-9"
                   placeholder="Password"
-                  type={isVisible ? "text" : "password"}
+                  type={isVisible ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   aria-describedby={`password-description`}
@@ -128,7 +113,7 @@ const SignupForm = () => {
                   className="text-muted-foreground/80 hover:text-foreground absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-colors"
                   type="button"
                   onClick={toggleVisibility}
-                  aria-label={isVisible ? "Hide password" : "Show password"}
+                  aria-label={isVisible ? 'Hide password' : 'Show password'}
                   aria-pressed={isVisible}
                   aria-controls="password"
                 >
@@ -153,14 +138,14 @@ const SignupForm = () => {
                   id="confirm-password"
                   className="pe-9"
                   placeholder="Confirm Password"
-                  type={isVisible ? "text" : "password"}
+                  type={isVisible ? 'text' : 'password'}
                   aria-describedby={`password-confirmation-description`}
                 />
                 <button
                   className="text-muted-foreground/80 hover:text-foreground absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-colors"
                   type="button"
                   onClick={toggleVisibility}
-                  aria-label={isVisible ? "Hide password" : "Show password"}
+                  aria-label={isVisible ? 'Hide password' : 'Show password'}
                   aria-pressed={isVisible}
                   aria-controls="password"
                 >
@@ -197,35 +182,18 @@ const SignupForm = () => {
             >
               {getStrengthText(strengthScore)}. Must contain:
             </p>
-            <ul
-              className="space-y-1.5 text-xs sm:text-sm"
-              aria-label="Password requirements"
-            >
+            <ul className="space-y-1.5 text-xs sm:text-sm" aria-label="Password requirements">
               {strength.map((req, index) => (
                 <li key={index} className="flex items-center gap-2">
                   {req.met ? (
-                    <CheckIcon
-                      size={16}
-                      className="text-emerald-500"
-                      aria-hidden="true"
-                    />
+                    <CheckIcon size={16} className="text-emerald-500" aria-hidden="true" />
                   ) : (
-                    <XIcon
-                      size={16}
-                      className="text-muted-foreground/80"
-                      aria-hidden="true"
-                    />
+                    <XIcon size={16} className="text-muted-foreground/80" aria-hidden="true" />
                   )}
-                  <span
-                    className={`${
-                      req.met ? "text-emerald-600" : "text-muted-foreground"
-                    }`}
-                  >
+                  <span className={`${req.met ? 'text-emerald-600' : 'text-muted-foreground'}`}>
                     {req.text}
                     <span className="sr-only">
-                      {req.met
-                        ? " - Requirement met"
-                        : " - Requirement not met"}
+                      {req.met ? ' - Requirement met' : ' - Requirement not met'}
                     </span>
                   </span>
                 </li>
@@ -258,10 +226,10 @@ const SignupForm = () => {
 
           {/* Login Link */}
           <div className="text-center text-xs sm:text-sm">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Button
               variant="link"
-              onClick={() => navigate("/auth/login")}
+              onClick={() => navigate('/auth/login')}
               className="underline underline-offset-4 p-0 m-0 hover:text-blue-400"
             >
               Login

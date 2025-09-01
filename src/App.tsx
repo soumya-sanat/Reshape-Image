@@ -1,23 +1,23 @@
-import { Suspense } from "react";
+import { Suspense } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  RouterProvider,
-} from "react-router-dom";
-import Loader from "./components/common/loader";
-import Home from "./pages/home";
-import Blog from "./pages/blog";
-import About from "./pages/about";
-import Contact from "./pages/contact";
-import { ThemeProvider } from "@/components/theme-provider";
-import RootLayout from "./layout/root-layout";
-import PageNotFound from "./pages/page-not-found";
-import Login from "./pages/auth/login";
-import Signup from "./pages/auth/signup";
-import "./styles/active.css";
-import AuthLayout from "./layout/auth-layout";
-import ImageResizerCompressor from "./pages/image-resize-compressor";
+  RouterProvider
+} from 'react-router-dom';
+import Loader from './components/common/loader';
+import Home from './pages/home';
+import Blog from './pages/blog';
+import About from './pages/about';
+import Contact from './pages/contact';
+import { ThemeProvider } from '@/components/theme-provider';
+import RootLayout from './layout/root-layout';
+import PageNotFound from './pages/page-not-found';
+import Login from './pages/auth/login';
+import Signup from './pages/auth/signup';
+import './styles/active.css';
+import AuthLayout from './layout/auth-layout';
+import ImageResizerCompressor from './components/common/image-compressor';
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -29,11 +29,7 @@ function App() {
 
         {/* <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} /> */}
-        <Route
-          path="/"
-          element={<RootLayout />}
-          errorElement={<PageNotFound />}
-        >
+        <Route path="/" element={<RootLayout />} errorElement={<PageNotFound />}>
           <Route index element={<Home />} />
           <Route path="blog" element={<Blog />} />
           <Route path="about" element={<About />} />

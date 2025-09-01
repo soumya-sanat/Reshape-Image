@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
 
 // const AuthLayout = ({ children }: { children: React.ReactNode }) => {
 const AuthLayout = () => {

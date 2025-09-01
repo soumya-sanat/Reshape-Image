@@ -1,5 +1,5 @@
-import logoNotFound from "../assets/not-found.svg";
-import "../styles/page-not-found.css";
+import logoNotFound from '../assets/not-found.svg';
+import '../styles/page-not-found.css';
 
 const PageNotFound = () => {
   return (

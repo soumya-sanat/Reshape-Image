@@ -1,10 +1,10 @@
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Card
+  // CardContent,
+  // CardDescription,
+  // CardHeader,
+  // CardTitle,
+} from '@/components/ui/card';
 
 const LoginFrom = () => {
   return <Card>LoginFrom</Card>;

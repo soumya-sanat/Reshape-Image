@@ -1,19 +1,19 @@
 .active-link {
-    position: relative;
-    font-weight: 600;
+  position: relative;
+  font-weight: 600;
 }
 
 /* Underline animation for active link */
 .active-link::after {
-    content: "";
-    position: absolute;
-    bottom: -3px;
-    /* Distance from text */
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #3b82f6;
-    /* Tailwind's blue-500, change as needed */
-    border-radius: 2px;
-    transition: width 0.3s ease-in-out;
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  /* Distance from text */
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #3b82f6;
+  /* Tailwind's blue-500, change as needed */
+  border-radius: 2px;
+  transition: width 0.3s ease-in-out;
 }

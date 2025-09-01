@@ -1,12 +1,12 @@
 // components/LazyButton.tsx
-import React, { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { buttonVariants, type ButtonProps } from "@/components/ui/button";
+import React, { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { buttonVariants, type ButtonProps } from '@/components/ui/button';
 
 // Lazy load the actual Button component
 const Button = React.lazy(() =>
-  import("@/components/ui/button").then((module) => ({
-    default: module.Button,
+  import('@/components/ui/button').then((module) => ({
+    default: module.Button
   }))
 );
 
@@ -16,8 +16,8 @@ interface LazyButtonProps extends ButtonProps {
 }
 
 const LazyButton: React.FC<LazyButtonProps> = ({
-  size = "default",
-  variant = "default",
+  size = 'default',
+  variant = 'default',
   height,
   width,
   className,
@@ -26,10 +26,7 @@ const LazyButton: React.FC<LazyButtonProps> = ({
   return (
     <Suspense
       fallback={
-        <Skeleton
-          className={buttonVariants({ size, className })}
-          style={{ height, width }}
-        />
+        <Skeleton className={buttonVariants({ size, className })} style={{ height, width }} />
       }
     >
       <Button
@@ -40,7 +37,7 @@ const LazyButton: React.FC<LazyButtonProps> = ({
         style={{
           height,
           width,
-          ...(props.style || {}),
+          ...(props.style || {})
         }}
       />
     </Suspense>

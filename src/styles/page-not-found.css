@@ -1,21 +1,21 @@
 @keyframes blobAnimation {
-    0% {
-        transform: scale(1) rotate(0deg);
-    }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
 
-    33% {
-        transform: scale(1.05) rotate(3deg);
-    }
+  33% {
+    transform: scale(1.05) rotate(3deg);
+  }
 
-    66% {
-        transform: scale(0.95) rotate(-3deg);
-    }
+  66% {
+    transform: scale(0.95) rotate(-3deg);
+  }
 
-    100% {
-        transform: scale(1) rotate(0deg);
-    }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 .animate-blob {
-    animation: blobAnimation 6s ease-in-out infinite;
+  animation: blobAnimation 6s ease-in-out infinite;
 }

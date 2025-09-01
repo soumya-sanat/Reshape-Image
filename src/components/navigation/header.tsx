@@ -1,21 +1,16 @@
-import { Link, NavLink } from "react-router-dom";
-import logo from "../../assets/logo.svg";
-import { Menu, X } from "lucide-react";
-import React from "react";
-import { cn } from "@/lib/utils";
-import { LazyButton } from "../lazy-components";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { ModeToggle } from "../mode-toggle";
+import { Link, NavLink } from 'react-router-dom';
+import logo from '../../assets/logo.svg';
+import { Menu, X } from 'lucide-react';
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { LazyButton } from '../lazy-components';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ModeToggle } from '../mode-toggle';
 const menuItems = [
-  { name: "Home", href: "/" },
-  { name: "Blog", href: "/blog" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  { name: 'Home', href: '/' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'About', href: '/about' },
+  { name: 'Contact', href: '/contact' }
 ];
 export const Header = () => {
   const [menuState, setMenuState] = React.useState(false);
@@ -25,8 +20,8 @@ export const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -35,23 +30,16 @@ export const Header = () => {
         <div className="m-auto max-w-[1200px] pr-6 pl-4">
           <div className="flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
             <div className="flex w-full justify-between lg:w-auto">
-              <NavLink
-                to="/"
-                aria-label="home"
-                className="flex items-center space-x-2"
-              >
+              <NavLink to="/" aria-label="home" className="flex items-center space-x-2">
                 <img
                   src={logo}
-                  className={cn(
-                    "h-8 w-8 duration-200",
-                    isScrolled ? "scale-75" : "scale-100"
-                  )}
+                  className={cn('h-8 w-8 duration-200', isScrolled ? 'scale-75' : 'scale-100')}
                   alt="Logo"
                 />
                 <span
                   className={cn(
-                    "text-lg font-bold duration-200",
-                    isScrolled ? "opacity-0" : "opacity-100"
+                    'text-lg font-bold duration-200',
+                    isScrolled ? 'opacity-0' : 'opacity-100'
                   )}
                 >
                   Image-Reshape
@@ -66,7 +54,7 @@ export const Header = () => {
 
                 <button
                   onClick={() => setMenuState(!menuState)}
-                  aria-label={menuState == true ? "Close Menu" : "Open Menu"}
+                  aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
                   className=" border-1 shadow-xs relative z-20 -m-2.5 -mr-4 block cursor-pointer p-1.5 rounded-md lg:hidden hover:bg-sidebar-accent"
                 >
                   <Menu className="in-data-[state=active]:rotate-180 in-data-[state=active]:scale-0 in-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
@@ -84,7 +72,7 @@ export const Header = () => {
                       to={item.href}
                       className={({ isActive }) =>
                         `relative px-2 py-1 text-md transition duration-300 hover:text-primary 
-            ${isActive ? "active-link text-primary" : "text-gray-400"}`
+            ${isActive ? 'active-link text-primary' : 'text-gray-400'}`
                       }
                     >
                       {item.name}
@@ -98,7 +86,7 @@ export const Header = () => {
 
                 <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit lg:border-l lg:pl-6">
                   <ModeToggle />
-                  <LazyButton asChild variant="outline" size="sm">
+                  {/* <LazyButton asChild variant="outline" size="sm">
                     <Link to="/login">
                       <span>Login</span>
                     </Link>
@@ -107,7 +95,7 @@ export const Header = () => {
                     <Link to="/signup">
                       <span>Sign Up</span>
                     </Link>
-                  </LazyButton>
+                  </LazyButton> */}
                 </div>
               </div>
             </div>
@@ -116,24 +104,18 @@ export const Header = () => {
       </nav>
 
       <Dialog open={menuState} onOpenChange={() => setMenuState(!menuState)}>
-        <DialogContent
-          className="sm:max-w-sm rounded-2xl p-6"
-          showCloseButton={false}
-        >
+        <DialogContent className="sm:max-w-sm rounded-2xl p-6" showCloseButton={false}>
           <DialogHeader className="flex flex-row items-center justify-between">
             <DialogTitle className="text-lg font-semibold flex items-center justify-between gap-3">
               <img
                 src={logo}
-                className={cn(
-                  "h-8 w-8 duration-200",
-                  isScrolled ? "scale-75" : "scale-100"
-                )}
+                className={cn('h-8 w-8 duration-200', isScrolled ? 'scale-75' : 'scale-100')}
                 alt="Logo"
               />
               <span
                 className={cn(
-                  "text-lg font-bold duration-200",
-                  isScrolled ? "opacity-0" : "opacity-100"
+                  'text-lg font-bold duration-200',
+                  isScrolled ? 'opacity-0' : 'opacity-100'
                 )}
               >
                 Image-Reshape
@@ -166,7 +148,7 @@ export const Header = () => {
           </ul>
 
           <div className="flex flex-col gap-3 mt-6">
-            <LazyButton asChild variant="outline" size="sm">
+            {/* <LazyButton asChild variant="outline" size="sm">
               <Link to="/auth/login" onClick={() => setMenuState(false)}>
                 <span>Login</span>
               </Link>
@@ -175,7 +157,7 @@ export const Header = () => {
               <Link to="/auth/signup" onClick={() => setMenuState(false)}>
                 <span>Sign Up</span>
               </Link>
-            </LazyButton>
+            </LazyButton> */}
           </div>
         </DialogContent>
       </Dialog>
