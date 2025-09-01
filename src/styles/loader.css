@@ -1,75 +1,75 @@
-@-webkit-keyframes follow-the-leader {
+.loader {
+  animation: rotate 1s infinite;
+  height: 50px;
+  width: 50px;
+}
+
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: 20px;
+  width: 20px;
+}
+
+.loader:before {
+  animation: ball1 1s infinite;
+  background-color: #fff;
+  box-shadow: 30px 0 0 oklch(0.424 0.199 265.638);
+  margin-bottom: 10px;
+}
+
+.loader:after {
+  animation: ball2 1s infinite;
+  background-color: oklch(0.424 0.199 265.638);
+  box-shadow: 30px 0 0 #fff;
+}
+
+@keyframes rotate {
   0% {
-    -webkit-transform: rotate(0deg) translateY(-200%);
-    transform: rotate(0deg) translateY(-200%);
+    transform: rotate(0deg) scale(0.8)
   }
 
-  60%,
+  50% {
+    transform: rotate(360deg) scale(1.2)
+  }
+
   100% {
-    -webkit-transform: rotate(360deg) translateY(-200%);
-    transform: rotate(360deg) translateY(-200%);
+    transform: rotate(720deg) scale(0.8)
   }
 }
 
-@keyframes follow-the-leader {
+@keyframes ball1 {
   0% {
-    -webkit-transform: rotate(0deg) translateY(-200%);
-    transform: rotate(0deg) translateY(-200%);
+    box-shadow: 30px 0 0 #ff3d00;
   }
 
-  60%,
+  50% {
+    box-shadow: 0 0 0 #ff3d00;
+    margin-bottom: 0;
+    transform: translate(15px, 15px);
+  }
+
   100% {
-    -webkit-transform: rotate(360deg) translateY(-200%);
-    transform: rotate(360deg) translateY(-200%);
+    box-shadow: 30px 0 0 #ff3d00;
+    margin-bottom: 10px;
   }
 }
 
-.loader-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+@keyframes ball2 {
+  0% {
+    box-shadow: 30px 0 0 #fff;
+  }
 
-.follow-the-leader-line {
-  height: 14px;
-  width: 14px;
-  position: relative;
-}
+  50% {
+    box-shadow: 0 0 0 #fff;
+    margin-top: -20px;
+    transform: translate(15px, 15px);
+  }
 
-.follow-the-leader-line div {
-  animation: follow-the-leader 1.25s infinite backwards;
-  border-radius: 100%;
-  height: 100%;
-  width: 100%;
-}
-
-/* Blue shades for each child */
-.follow-the-leader-line div:nth-child(1) {
-  animation-delay: 0.15s;
-  background-color: rgba(0, 123, 255, 1);
-  /* Bright blue */
-}
-
-.follow-the-leader-line div:nth-child(2) {
-  animation-delay: 0.3s;
-  background-color: rgba(0, 123, 255, 0.85);
-  /* Slightly lighter */
-}
-
-.follow-the-leader-line div:nth-child(3) {
-  animation-delay: 0.45s;
-  background-color: rgba(0, 123, 255, 0.7);
-  /* Medium blue */
-}
-
-.follow-the-leader-line div:nth-child(4) {
-  animation-delay: 0.6s;
-  background-color: rgba(0, 123, 255, 0.55);
-  /* Softer blue */
-}
-
-.follow-the-leader-line div:nth-child(5) {
-  animation-delay: 0.75s;
-  background-color: rgba(0, 123, 255, 0.4);
-  /* Lightest blue */
+  100% {
+    box-shadow: 30px 0 0 #fff;
+    margin-top: 0;
+  }
 }

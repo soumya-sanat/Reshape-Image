@@ -24,12 +24,12 @@ export function SearchableSelectPreset({ value, onValueChange }: SearchableSelec
           {value ? value : 'Select Preset...'}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
-        <Command>
+      <PopoverContent className="p-0 w-auto min-w-[var(--radix-popover-trigger-width)] max-w-[95vw]">
+        <Command className="w-full">
           <CommandInput placeholder="Search presets..." />
           <CommandList>
             <CommandEmpty>No presets found.</CommandEmpty>
-            <CommandGroup>
+            <CommandGroup className="max-h-[300px] overflow-y-auto">
               {Presets.map((preset) => (
                 <CommandItem
                   key={preset.name}
@@ -37,9 +37,9 @@ export function SearchableSelectPreset({ value, onValueChange }: SearchableSelec
                   onSelect={() => onValueChange(preset.name)}
                   className="flex items-center gap-2 cursor-pointer">
                   <CheckIcon
-                    className={`h-4 w-4 ${value === preset.name ? 'opacity-100' : 'opacity-0'}`}
+                    className={`h-4 w-4 flex-shrink-0 ${value === preset.name ? 'opacity-100' : 'opacity-0'}`}
                   />
-                  {preset.name}
+                  <span className="truncate">{preset.name}</span>
                 </CommandItem>
               ))}
             </CommandGroup>

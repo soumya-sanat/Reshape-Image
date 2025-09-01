@@ -1,19 +1,26 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  LazyCard,
+  LazyCardContent,
+  LazyCardDescription,
+  LazyCardHeader,
+  LazyCardTitle
+} from '@/components/lazy-components/lazy-card';
 import UploadFile from '@/components/common/upload-file';
 import ImageCompressor from '@/components/common/image-compressor';
 import { useEffect, useState, useCallback } from 'react';
-import type { FileWithPreview } from '@/hooks/use-file-upload';
+
 import { useUploadImageMutation } from '@/services/imageApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOriginalImage, unSetOriginalImage } from '@/features/imageSlice';
 import { toast } from 'react-hot-toast';
-import type { ApiError, Image, ProcessedImageType } from '@/types';
+import type { ApiError, FileWithPreview, Image, ProcessedImageType } from '@/types';
 import type { RootState } from '@/app/store';
-import { LazyButton } from '@/components/lazy-components';
+import { LazyButton } from '@/components/lazy-components/lazy-button';
 import FormatForm, { type FormatFormValues } from '@/components/common/format-form';
 import { Presets } from '@/constants/PRESETS';
 import ProcessedImage from '@/components/common/processed-image';
 import { SearchableSelectPreset } from '@/components/common/searchable-select-preset';
+import { downloadImage } from '@/utils';
 
 const Home = () => {
   const [uploadedFile, setUploadedFile] = useState<FileWithPreview | null>(null);
@@ -113,26 +120,35 @@ const Home = () => {
     toast.success('🎉 Image resized successfully!');
   };
 
-  const handlePresetSelect = useCallback((presetName: string) => {
-    const selectedPreset = Presets.find((p) => p.name === presetName);
-    if (!selectedPreset) return;
+  const handlePresetSelect = useCallback(
+    (presetName: string) => {
+      const selectedPreset = Presets.find((p) => p.name === presetName);
+      if (!selectedPreset || !uploadedImageData) return;
 
-    const newConfig: FormatFormValues = {
-      width: selectedPreset.property.width,
-      height: selectedPreset.property.height,
-      dpi: selectedPreset.property.dpi,
-      quality: selectedPreset.property.quality,
-      format: selectedPreset.property.format,
-      background: selectedPreset.property.background,
-      unit: 'pixel',
-      aspectLock: true,
-      widthPx: selectedPreset.property.width,
-      heightPx: selectedPreset.property.height
-    };
+      // Preserve the original image dimensions, override only preset-specific fields
+      const newConfig: FormatFormValues = {
+        width: selectedPreset.property.width,
+        height: selectedPreset.property.height,
+        dpi: selectedPreset.property.dpi,
+        quality: selectedPreset.property.quality,
+        format: selectedPreset.property.format,
+        background: selectedPreset.property.background,
+        unit: 'pixel',
+        aspectLock: true,
+        widthPx: selectedPreset.property.width,
+        heightPx: selectedPreset.property.height
+      };
 
-    setFormatConfig(newConfig);
-    setSelectedPresetName(selectedPreset.name);
-  }, []);
+      // Merge with existing format config if available
+      setFormatConfig((prev) => ({
+        ...prev,
+        ...newConfig
+      }));
+
+      setSelectedPresetName(selectedPreset.name);
+    },
+    [uploadedImageData]
+  );
 
   useEffect(() => {
     if (!formatConfig) return;
@@ -160,18 +176,24 @@ const Home = () => {
     };
   }, [uploadedFile]);
 
+  const handleDownloadOriginalImage = () => {
+    if (!uploadedImageData || !uploadedImageData.url) return;
+
+    const extension = uploadedImageData.type?.split('/')[1] || 'png';
+    const fileName = `${uploadedImageData.name?.split('.')[0] || 'image'}.${extension}`;
+    downloadImage(uploadedImageData.url, fileName);
+  };
   return (
     <div className="flex h-full flex-col gap-2 overflow-x-auto rounded-xl p-2">
-      {/* Upload Card */}
-      <Card className="mx-auto w-full max-w-[1200px] rounded-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Image Resizer</CardTitle>
-          <CardDescription>
+      <LazyCard className="mx-auto w-full max-w-[1200px] rounded-md">
+        <LazyCardHeader>
+          <LazyCardTitle className="text-2xl font-bold">Image Resizer</LazyCardTitle>
+          <LazyCardDescription>
             Resize, compress, and perfect your images — fast, easy, and high-quality for any format,
             exam, or ID.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </LazyCardDescription>
+        </LazyCardHeader>
+        <LazyCardContent>
           <UploadFile
             maxFiles={1}
             maxSize={10 * 1024 * 1024}
@@ -188,68 +210,76 @@ const Home = () => {
               Upload failed. Please try again.
             </div>
           )}
-        </CardContent>
-      </Card>
+        </LazyCardContent>
+      </LazyCard>
 
       {/* Uploaded Image Preview */}
       {uploadedFile && uploadedImageData && uploadedImageData.id && (
-        <Card className="mx-auto w-full max-w-[1200px] rounded-md">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">Uploaded Image</CardTitle>
-            <CardDescription>Image preview and details.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex max-md:flex-col items-start gap-4">
+        <LazyCard className="w-full max-w-[1200px]  mx-auto rounded-md shadow-lg border  ">
+          <LazyCardHeader className="border-b">
+            <LazyCardTitle className="text-2xl font-bold">Uploaded Image Details</LazyCardTitle>
+            <LazyCardDescription className="text-sm text-gray-500">
+              Image details with original height and width.
+            </LazyCardDescription>
+          </LazyCardHeader>
+          <LazyCardContent className="">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
               <div>
-                {uploadedFile.file.type.startsWith('image/') && uploadedFile.preview && (
-                  <div>
-                    <p className="font-semibold text-xl mb-2">Preview:</p>
-                    <img
-                      src={uploadedFile.preview}
-                      alt="Preview"
-                      className="max-w-full max-h-64 rounded-md border"
-                    />
-                  </div>
-                )}
+                <span className="block text-xs uppercase font-semibold text-gray-400 dark:text-white mb-1">
+                  Name
+                </span>
+                <span className="text-base text-gray-700 dark:text-zinc-400">
+                  {uploadedFile.file.name}
+                </span>
               </div>
               <div>
-                <p className="font-semibold text-xl mb-2">Detail:</p>
-                <div className="flex flex-col items-start gap-4 mt-3">
-                  <p>
-                    <strong>Name:</strong> {uploadedFile.file.name}
-                  </p>
-                  <p>
-                    <strong>Size:</strong> {(uploadedFile.file.size / 1024 / 1024).toFixed(2)}MB
-                  </p>
-                  <p>
-                    <strong>Type:</strong> {uploadedImageData.type || 'N/A'}
-                  </p>
-                  <p>
-                    <strong>Width:</strong> {uploadedImageData.width || 'N/A'} px
-                  </p>
-                  <p>
-                    <strong>Height:</strong> {uploadedImageData.height || 'N/A'} px
-                  </p>
-                  <LazyButton variant="default" height={40}>
-                    Download Original
-                  </LazyButton>
-                </div>
+                <span className="block text-xs uppercase font-semibold text-gray-400 dark:text-white mb-1">
+                  Size
+                </span>
+                <span className="text-base text-gray-700 dark:text-zinc-400">
+                  {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB
+                </span>
+              </div>
+              <div>
+                <span className="block text-xs uppercase font-semibold text-gray-400 dark:text-white mb-1">
+                  Type
+                </span>
+                <span className="text-base text-gray-700 dark:text-zinc-400">
+                  {uploadedImageData.type || 'N/A'}
+                </span>
+              </div>
+              <div>
+                <span className="block text-xs uppercase font-semibold text-gray-400 dark:text-white mb-1">
+                  Dimensions
+                </span>
+                <span className="text-base text-gray-700 dark:text-zinc-400">
+                  {uploadedImageData.width || 'N/A'} × {uploadedImageData.height || 'N/A'} px
+                </span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div className="mt-8 flex justify-end">
+              <LazyButton
+                variant="default"
+                height={44}
+                onClick={handleDownloadOriginalImage}
+                className="px-5 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow">
+                Download Original
+              </LazyButton>
+            </div>
+          </LazyCardContent>
+        </LazyCard>
       )}
 
       {/* Combined Card: FormatForm + Presets + Resize */}
       {uploadedFile && uploadedImageData && uploadedImageData.id && (
-        <Card className="mx-auto w-full max-w-[1200px] rounded-md">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">Image Format & Presets</CardTitle>
-            <CardDescription>
+        <LazyCard className="mx-auto w-full max-w-[1200px] rounded-md">
+          <LazyCardHeader>
+            <LazyCardTitle className="text-xl font-bold">Image Format & Presets</LazyCardTitle>
+            <LazyCardDescription>
               Configure your image format, choose a preset, and resize instantly.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            </LazyCardDescription>
+          </LazyCardHeader>
+          <LazyCardContent className="space-y-6">
             {/* Format Form */}
             <FormatForm
               value={formatConfig || undefined}
@@ -260,20 +290,20 @@ const Home = () => {
             />
 
             {/* Replaced Badges with SearchableSelectPreset */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-bold text-xl">Presets</CardTitle>
-                <CardDescription>
+            <LazyCard>
+              <LazyCardHeader>
+                <LazyCardTitle className="font-bold text-xl">Presets</LazyCardTitle>
+                <LazyCardDescription>
                   Find suitable preset for you image according to exams.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+                </LazyCardDescription>
+              </LazyCardHeader>
+              <LazyCardContent>
                 <SearchableSelectPreset
                   value={selectedPresetName}
                   onValueChange={handlePresetSelect}
                 />
-              </CardContent>
-            </Card>
+              </LazyCardContent>
+            </LazyCard>
 
             {/* Resize Button */}
             {formatConfig && (
@@ -281,29 +311,28 @@ const Home = () => {
                 className="w-full h-10 text-lg"
                 variant="default"
                 onClick={handleResize}
-                disabled={!formatConfig}
-              >
+                disabled={!formatConfig}>
                 Resize Image
               </LazyButton>
             )}
-          </CardContent>
-        </Card>
+          </LazyCardContent>
+        </LazyCard>
       )}
 
       {/* Processed Images */}
       {processedImages.length > 0 && (
-        <Card className="mx-auto w-full max-w-[1200px] rounded-md">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">
+        <LazyCard className="mx-auto w-full max-w-[1200px] rounded-md">
+          <LazyCardHeader>
+            <LazyCardTitle className="text-xl font-bold">
               Processed Images ({processedImages.length})
-            </CardTitle>
-            <CardDescription>Click download to save processed images</CardDescription>
-          </CardHeader>
-          <CardContent>
+            </LazyCardTitle>
+            <LazyCardDescription>Click download to save processed images</LazyCardDescription>
+          </LazyCardHeader>
+          <LazyCardContent>
             <div className="grid grid-cols-3 gap-6 max-md:grid-cols-1 max-lg:grid-cols-2">
-              {processedImages.map((image, idx) => (
+              {[...processedImages].reverse().map((image, idx) => (
                 <ProcessedImage
-                  key={image.path} // ✅ Stable key
+                  key={image.path}
                   name={image.name}
                   url={image.url}
                   path={image.path}
@@ -324,20 +353,20 @@ const Home = () => {
                 />
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </LazyCardContent>
+        </LazyCard>
       )}
 
       {/* Image Compressor */}
-      <Card className="mx-auto w-full max-w-[1200px] rounded-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Image Compressor</CardTitle>
-          <CardDescription>Compress and download your images instantly.</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <LazyCard className="mx-auto w-full max-w-[1200px] rounded-md">
+        <LazyCardHeader>
+          <LazyCardTitle className="text-2xl font-bold">Image Compressor</LazyCardTitle>
+          <LazyCardDescription>Compress and download your images instantly.</LazyCardDescription>
+        </LazyCardHeader>
+        <LazyCardContent>
           <ImageCompressor />
-        </CardContent>
-      </Card>
+        </LazyCardContent>
+      </LazyCard>
     </div>
   );
 };

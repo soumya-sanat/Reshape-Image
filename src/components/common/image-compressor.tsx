@@ -1,13 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import UploadFile from '@/components/common/upload-file';
 import { Button } from '@/components/ui/button';
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle,
-// } from "@/components/ui/card";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -81,6 +74,9 @@ const ImageCompressor = () => {
     new Compressor(file, {
       quality: quality / 100,
       success(result) {
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl); // 🔹 Free old URL memory
+        }
         const compressedURL = URL.createObjectURL(result);
         setPreviewUrl(compressedURL);
 
@@ -169,6 +165,14 @@ const ImageCompressor = () => {
       resizeAndCompress();
     }
   }, [debouncedDimensions, debouncedQuality]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   return (
     <div className="w-full h-fit">

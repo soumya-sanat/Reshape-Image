@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ProcessedImageType } from '@/types';
-import { ImageIcon } from 'lucide-react';
+import { Download, Trash2, ExternalLink } from 'lucide-react';
 import { Button } from '../ui/button';
 import { downloadImage } from '@/utils';
-import { Skeleton } from '../ui/skeleton'; // ✅ Import Skeleton
+import { Skeleton } from '../ui/skeleton';
 import { BASE_API_URL } from '@/constants/API';
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { LazyButton } from '@/components/lazy-components/lazy-button';
 
 type ExtendedProcessedImage = ProcessedImageType & {
   index: number;
@@ -25,134 +28,176 @@ const ProcessedImage = ({
 }: ExtendedProcessedImage) => {
   const [fileSize, setFileSize] = useState<string>('Calculating...');
   const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const formattedImageUrl =
-    `${BASE_API_URL}/cdn/img/` +
-    `${height ? `height=${height.toFixed(0)},` : ''}` +
-    `${width ? `width=${width.toFixed(0)},` : ''}` +
-    `${dpi ? `dpi=${dpi},` : ''}` +
-    `${quality ? `quality=${quality},` : ''}` +
-    `${format ? `format=${format},` : ''}` +
-    `${background ? `background=${background}` : ''}` +
-    `/${path}`;
+  const formattedImageUrl = useMemo(() => {
+    return (
+      `${BASE_API_URL}/cdn/img/` +
+      `${height ? `height=${height.toFixed(0)},` : ''}` +
+      `${width ? `width=${width.toFixed(0)},` : ''}` +
+      `${dpi ? `dpi=${dpi},` : ''}` +
+      `${quality ? `quality=${quality},` : ''}` +
+      `${format ? `format=${format},` : ''}` +
+      `${background ? `background=${background}` : ''}` +
+      `/${path}`
+    );
+  }, [height, width, dpi, quality, format, background, path]);
 
   useEffect(() => {
-    const loadImageAndCalculateSize = async () => {
+    let isMounted = true;
+
+    const fetchImageSize = async () => {
       try {
-        const img = new Image();
-        img.src = formattedImageUrl;
+        const response = await fetch(formattedImageUrl);
+        const blob = await response.blob();
 
-        img.onload = async () => {
-          setIsImageLoaded(true);
+        if (!isMounted) return;
 
-          try {
-            const response = await fetch(formattedImageUrl);
-            const blob = await response.blob();
+        const sizeKB = blob.size / 1024;
+        const sizeMB = sizeKB / 1024;
 
-            const sizeInKB = blob.size / 1024;
-            const sizeInMB = sizeInKB / 1024;
-
-            setFileSize(sizeInMB >= 1 ? `${sizeInMB.toFixed(2)} MB` : `${sizeInKB.toFixed(2)} KB`);
-          } catch (error) {
-            // console.error("Error fetching blob:", error);
-            setFileSize('Error');
-          }
-        };
-
-        img.onerror = () => {
-          // console.error("Failed to load image");
-          setFileSize('Error');
-        };
+        setFileSize(sizeMB >= 1 ? `${sizeMB.toFixed(2)} MB` : `${sizeKB.toFixed(2)} KB`);
+        setIsImageLoaded(true);
       } catch (error) {
-        // console.error("Error loading image:", error);
-        setFileSize('Error');
+        if (isMounted) {
+          console.error('Error fetching size:', error);
+          setFileSize('Error');
+          setIsImageLoaded(false);
+        }
       }
     };
 
-    loadImageAndCalculateSize();
+    fetchImageSize();
+
+    return () => {
+      isMounted = false;
+    };
   }, [formattedImageUrl]);
 
   const handleDownload = () => {
     const extension = format || 'png';
-    const fileName = `${name.split('.')[0]}.${extension}`;
+    const fileName = `${name.split('.')[0]}_${width}x${height}.${extension}`;
     downloadImage(formattedImageUrl, fileName);
   };
 
+  const handlePreview = () => {
+    window.open(formattedImageUrl, '_blank');
+  };
+
+  const formatName = (fileName: string) => {
+    const baseName = fileName.split('.')[0];
+    return baseName.length > 18 ? `${baseName.substring(0, 15)}...` : baseName;
+  };
+
   return (
-    <div className="flex flex-col w-xs rounded-xl border shadow-md overflow-hidden bg-card hover:border-primary/60 transition-colors">
-      {/* Image Preview / Skeleton */}
-      <div className="flex-shrink-0 w-full h-52 max-sm:h-36 bg-muted flex items-center justify-center">
+    <Card
+      className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg border-border/50 hover:border-primary/30"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}>
+      {/* Image Preview with Overlay */}
+      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/50 to-muted">
         {!isImageLoaded ? (
-          <Skeleton className="w-full h-full" />
-        ) : url ? (
-          <img src={formattedImageUrl} alt={name} className="object-cover h-full w-full" />
-        ) : (
-          <ImageIcon className="w-8 h-8 text-muted-foreground" />
-        )}
-      </div>
-
-      {/* Content Section */}
-      <div className="flex flex-col justify-between flex-1 py-3 px-4 border-l border-border">
-        {!isImageLoaded ? (
-          <>
-            <Skeleton className="h-5 w-3/4 mb-2 rounded" />
-            <Skeleton className="h-4 w-1/2 mb-2 rounded" />
-            <Skeleton className="h-4 w-2/3 mb-2 rounded" />
-            <Skeleton className="h-4 w-1/3 mb-2 rounded" />
-            <Skeleton className="h-4 w-1/2 mb-2 rounded" />
-            <Skeleton className="h-4 w-1/4 mb-2 rounded" />
-            <Skeleton className="h-4 w-1/3 mb-2 rounded" />
-          </>
+          <Skeleton className="w-full h-full rounded-none" />
         ) : (
           <>
-            <div>
-              <h3 className="font-medium text-lg sm:text-xl truncate text-card-foreground">
-                {name.split('.')[0].length > 22
-                  ? `${name.substring(0, 22).split('.')[0]}...`
-                  : name.split('.')[0]}
-              </h3>
+            <img
+              src={formattedImageUrl}
+              alt={name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            {/* Hover Overlay */}
+            <div
+              className={`absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center gap-2 group-hover:opacity-100 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+              <LazyButton
+                variant="secondary"
+                size="sm"
+                className="rounded-full backdrop-blur-sm"
+                onClick={handlePreview}>
+                <ExternalLink className="w-4 h-4 mr-1" />
+                Preview
+              </LazyButton>
             </div>
-            <p className="text-md max-sm:text-sm text-muted-foreground mt-1">Width: {width}</p>
-            <p className="text-md max-sm:text-sm text-muted-foreground mt-1">Height: {height}</p>
-            <p className="text-md max-sm:text-sm text-muted-foreground mt-1">
-              Resolution (DPI): {dpi}
-            </p>
-            <p className="text-md max-sm:text-sm text-muted-foreground mt-1">Quality: {quality}</p>
-            <p className="text-md max-sm:text-sm text-muted-foreground mt-1">
-              Format:{' '}
-              <span className="uppercase text-md font-bold text-black dark:text-zinc-400">
-                {format}
-              </span>
-            </p>
-            <p className="text-md max-sm:text-sm text-muted-foreground mt-1">
-              Size:{' '}
-              <span className="uppercase text-md font-bold text-black dark:text-zinc-400">
-                {isImageLoaded ? fileSize : 'Loading...'}
-              </span>
-            </p>
           </>
         )}
       </div>
 
-      {/* Buttons */}
-      <div className="flex flex-col sm:flex-row justify-end gap-2 mt-3 px-4 pb-4">
+      <CardHeader className="p-4 pb-1">
+        <div className="flex items-start justify-between">
+          <h3 className="font-semibold text-lg text-foreground truncate flex-1">
+            {formatName(name)}
+          </h3>
+          <Badge variant="secondary" className="ml-2 shrink-0 uppercase">
+            {format}
+          </Badge>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {width} × {height} px
+        </p>
+      </CardHeader>
+
+      <CardContent className="p-4 pt-0">
         {!isImageLoaded ? (
-          <>
-            <Skeleton className="h-9 w-24 rounded-3xl" />
-            <Skeleton className="h-9 w-24 rounded-3xl" />
-          </>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
         ) : (
-          <>
-            <Button className="rounded-3xl" variant="outline" onClick={handleDownload}>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="space-y-1">
+              <p className="text-muted-foreground">Quality</p>
+              <p className="font-medium text-foreground">{quality}%</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground">DPI</p>
+              <p className="font-medium text-foreground">{dpi}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground">Background</p>
+              <p className="font-medium text-foreground capitalize">{background}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground">Size</p>
+              <p className="font-medium text-foreground">{fileSize}</p>
+            </div>
+          </div>
+        )}
+      </CardContent>
+
+      <CardFooter className="p-4 pt-0">
+        {!isImageLoaded ? (
+          <div className="flex gap-2 w-full">
+            <Skeleton className="h-9 flex-1 rounded-full" />
+            <Skeleton className="h-9 flex-1 rounded-full" />
+          </div>
+        ) : (
+          <div className="flex gap-2 w-full">
+            <Button
+              variant="default"
+              size="sm"
+              className="flex-1 rounded-full gap-2 transition-all hover:shadow-md"
+              onClick={handleDownload}>
+              <Download className="w-4 h-4" />
               Download
             </Button>
-            <Button className="rounded-3xl" variant="destructive" onClick={onRemove}>
-              Remove
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive transition-all"
+              onClick={onRemove}>
+              <Trash2 className="w-4 h-4" />
             </Button>
-          </>
+          </div>
         )}
-      </div>
-    </div>
+      </CardFooter>
+
+      {/* Loading indicator */}
+      {!isImageLoaded && (
+        <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      )}
+    </Card>
   );
 };
 

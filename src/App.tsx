@@ -13,19 +13,19 @@ import Contact from './pages/contact';
 import { ThemeProvider } from '@/components/theme-provider';
 import RootLayout from './layout/root-layout';
 import PageNotFound from './pages/page-not-found';
-import Login from './pages/auth/login';
-import Signup from './pages/auth/signup';
+// import Login from './pages/auth/login';
+// import Signup from './pages/auth/signup';
 import './styles/active.css';
-import AuthLayout from './layout/auth-layout';
+// import AuthLayout from './layout/auth-layout';
 import ImageResizerCompressor from './components/common/image-compressor';
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route path="/auth" element={<AuthLayout />}>
+        {/* <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
-        </Route>
+        </Route> */}
 
         {/* <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} /> */}
@@ -49,8 +49,7 @@ function App() {
           <div className="flex h-screen w-full items-center justify-center">
             <Loader />
           </div>
-        }
-      >
+        }>
         <RouterProvider router={router} />
       </Suspense>
     </ThemeProvider>

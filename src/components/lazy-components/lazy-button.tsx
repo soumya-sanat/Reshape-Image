@@ -1,9 +1,7 @@
-// components/LazyButton.tsx
 import React, { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { buttonVariants, type ButtonProps } from '@/components/ui/button';
 
-// Lazy load the actual Button component
 const Button = React.lazy(() =>
   import('@/components/ui/button').then((module) => ({
     default: module.Button

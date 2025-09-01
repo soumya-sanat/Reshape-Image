@@ -2,9 +2,9 @@ import { convertDimension } from '@/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import EditableNumber from './editable-number';
 import { Slider } from '@/components/ui/slider';
-import { LazyButton } from '../lazy-components';
+import { LazyButton } from '@/components/lazy-components/lazy-button';
 import { Input } from '../ui/input';
-import { Lock, LockOpen } from 'lucide-react';
+import { Lock, LockOpen, RotateCcw } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -64,7 +64,38 @@ const FormatForm = ({
     convertDimension(baseHeightPx, 'pixel', unit, originalHeight, dpi)
   );
 
+  // Store original values for reset
+  const originalValues = useMemo(
+    () => ({
+      widthPx: originalWidth,
+      heightPx: originalHeight,
+      aspectLock: true,
+      unit: 'pixel' as const,
+      dpi: 72,
+      quality: 90,
+      format: 'jpg' as const,
+      background: 'white' as const,
+      width: convertDimension(originalWidth, 'pixel', 'pixel', originalWidth, 72),
+      height: convertDimension(originalHeight, 'pixel', 'pixel', originalHeight, 72)
+    }),
+    [originalWidth, originalHeight]
+  );
+
   const onToggleAspectLock = () => setAspectLock((p) => !p);
+
+  // Reset to original values
+  const handleReset = () => {
+    setBaseWidthPx(originalValues.widthPx);
+    setBaseHeightPx(originalValues.heightPx);
+    setAspectLock(originalValues.aspectLock);
+    setUnit(originalValues.unit);
+    setDpi(originalValues.dpi);
+    setQuality(originalValues.quality);
+    setFormat(originalValues.format);
+    setBackground(originalValues.background);
+    setWidth(originalValues.width);
+    setHeight(originalValues.height);
+  };
 
   // --- Width change ---
   const handleWidthChange = (val: number) => {
@@ -161,13 +192,26 @@ const FormatForm = ({
 
   return (
     <div className="my-2 w-full border rounded-lg shadow-sm bg-background p-5">
-      <h2 className="text-xl font-bold text-foreground">Format Image</h2>
-      <p className="text-muted-foreground text-sm mb-4">
-        Input the configuration you want for your image
-      </p>
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h2 className="text-xl font-bold text-foreground">Format Image</h2>
+          <p className="text-muted-foreground text-sm">
+            Input the configuration you want for your image
+          </p>
+        </div>
+        <LazyButton
+          type="button"
+          onClick={handleReset}
+          variant="outline"
+          className="flex items-center gap-2"
+          title="Reset to original values">
+          <RotateCcw className="w-4 h-4" />
+          Reset
+        </LazyButton>
+      </div>
 
       <form onSubmit={(e) => e.preventDefault()}>
-        <div className="mt-2  w-full ">
+        <div className="mt-2 w-full">
           {/* Width / Height + Lock */}
           <div className="flex items-center justify-between gap-7 mb-4 w-full">
             <div className="flex-1 flex flex-col">
@@ -185,7 +229,7 @@ const FormatForm = ({
                 type="button"
                 onClick={onToggleAspectLock}
                 variant={aspectLock ? 'default' : 'outline'}
-              >
+                title={aspectLock ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}>
                 {aspectLock ? <Lock /> : <LockOpen />}
               </LazyButton>
             </div>
@@ -270,8 +314,7 @@ const FormatForm = ({
             <div
               className={`mb-4 flex-1 max-md:w-full ${
                 format === 'png' || format === 'gif' || format === 'bmp' ? 'hidden' : 'block'
-              }`}
-            >
+              }`}>
               <label className="block text-muted-foreground mb-1">Quality (%)</label>
               <Slider
                 min={1}
