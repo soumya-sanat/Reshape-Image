@@ -1,4 +1,4 @@
-import type { ChangeEvent, DragEvent, InputHTMLAttributes } from "react";
+import type { ChangeEvent, DragEvent, InputHTMLAttributes } from 'react';
 
 export type Image = {
   id?: number | null;
@@ -54,7 +54,6 @@ export type FileMetadata = {
   url: string;
   id: string;
 };
-
 
 export type FileWithPreview = {
   file: File | FileMetadata;

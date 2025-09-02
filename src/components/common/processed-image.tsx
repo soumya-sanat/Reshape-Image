@@ -7,7 +7,7 @@ import { Skeleton } from '../ui/skeleton';
 import { BASE_API_URL } from '@/constants/API';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { LazyButton } from '@/components/lazy-components/lazy-button';
+// import { LazyButton } from '@/components/lazy-components/lazy-button';
 
 type ExtendedProcessedImage = ProcessedImageType & {
   index: number;
@@ -93,7 +93,8 @@ const ProcessedImage = ({
     <Card
       className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg border-border/50 hover:border-primary/30"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Image Preview with Overlay */}
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/50 to-muted">
         {!isImageLoaded ? (
@@ -107,15 +108,17 @@ const ProcessedImage = ({
             />
             {/* Hover Overlay */}
             <div
-              className={`absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center gap-2 group-hover:opacity-100 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-              <LazyButton
+              className={`absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center gap-2 group-hover:opacity-100 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+            >
+              <Button
                 variant="secondary"
                 size="sm"
                 className="rounded-full backdrop-blur-sm"
-                onClick={handlePreview}>
+                onClick={handlePreview}
+              >
                 <ExternalLink className="w-4 h-4 mr-1" />
                 Preview
-              </LazyButton>
+              </Button>
             </div>
           </>
         )}
@@ -176,7 +179,8 @@ const ProcessedImage = ({
               variant="default"
               size="sm"
               className="flex-1 rounded-full gap-2 transition-all hover:shadow-md"
-              onClick={handleDownload}>
+              onClick={handleDownload}
+            >
               <Download className="w-4 h-4" />
               Download
             </Button>
@@ -184,7 +188,8 @@ const ProcessedImage = ({
               variant="outline"
               size="sm"
               className="rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive transition-all"
-              onClick={onRemove}>
+              onClick={onRemove}
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>

@@ -204,7 +204,8 @@ const FormatForm = ({
           onClick={handleReset}
           variant="outline"
           className="flex items-center gap-2"
-          title="Reset to original values">
+          title="Reset to original values"
+        >
           <RotateCcw className="w-4 h-4" />
           Reset
         </LazyButton>
@@ -229,7 +230,8 @@ const FormatForm = ({
                 type="button"
                 onClick={onToggleAspectLock}
                 variant={aspectLock ? 'default' : 'outline'}
-                title={aspectLock ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}>
+                title={aspectLock ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
+              >
                 {aspectLock ? <Lock /> : <LockOpen />}
               </LazyButton>
             </div>
@@ -314,7 +316,8 @@ const FormatForm = ({
             <div
               className={`mb-4 flex-1 max-md:w-full ${
                 format === 'png' || format === 'gif' || format === 'bmp' ? 'hidden' : 'block'
-              }`}>
+              }`}
+            >
               <label className="block text-muted-foreground mb-1">Quality (%)</label>
               <Slider
                 min={1}

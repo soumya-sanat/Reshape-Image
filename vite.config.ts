@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
               '@/components/ui/dropdown-menu',
               // '@/components/ui/alert',
               // '@/components/ui/avatar',
-              '@/components/ui/badge',
+              '@/components/ui/badge'
               // '@/components/ui/checkbox',
               // '@/components/ui/radio-group',
               // '@/components/ui/switch',

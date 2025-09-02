@@ -211,7 +211,8 @@ const ImageCompressor = () => {
 
             <div
               className="cursor-pointer mt-6 max-sm:mt-3"
-              onClick={() => setAspectLocked(!aspectLocked)}>
+              onClick={() => setAspectLocked(!aspectLocked)}
+            >
               <Button variant={`${aspectLocked ? 'default' : 'outline'}`}>
                 {aspectLocked ? <Lock size={24} /> : <Unlock size={24} />}
               </Button>

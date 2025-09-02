@@ -40,7 +40,8 @@ export const Header = () => {
                   className={cn(
                     'text-lg font-bold duration-200',
                     isScrolled ? 'opacity-0' : 'opacity-100'
-                  )}>
+                  )}
+                >
                   Image-Reshape
                 </span>
               </NavLink>
@@ -54,7 +55,8 @@ export const Header = () => {
                 <button
                   onClick={() => setMenuState(!menuState)}
                   aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
-                  className=" border-1 shadow-xs relative z-20 -m-2.5 -mr-4 block cursor-pointer p-1.5 rounded-md lg:hidden hover:bg-sidebar-accent">
+                  className=" border-1 shadow-xs relative z-20 -m-2.5 -mr-4 block cursor-pointer p-1.5 rounded-md lg:hidden hover:bg-sidebar-accent"
+                >
                   <Menu className="in-data-[state=active]:rotate-180 in-data-[state=active]:scale-0 in-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
                   <X className="in-data-[state=active]:rotate-0 in-data-[state=active]:scale-100 in-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
                 </button>
@@ -71,7 +73,8 @@ export const Header = () => {
                       className={({ isActive }) =>
                         `relative px-2 py-1 text-md transition duration-300 hover:text-primary 
             ${isActive ? 'active-link text-primary' : 'text-gray-400'}`
-                      }>
+                      }
+                    >
                       {item.name}
                     </NavLink>
                   ))}
@@ -113,7 +116,8 @@ export const Header = () => {
                 className={cn(
                   'text-lg font-bold duration-200',
                   isScrolled ? 'opacity-0' : 'opacity-100'
-                )}>
+                )}
+              >
                 Image-Reshape
               </span>
             </DialogTitle>
@@ -122,7 +126,8 @@ export const Header = () => {
               <ModeToggle />
               <button
                 onClick={() => setMenuState(false)}
-                className=" border-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800">
+                className=" border-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800"
+              >
                 <X className="size-5" />
               </button>
             </div>
@@ -134,7 +139,8 @@ export const Header = () => {
                 <NavLink
                   to={item.href}
                   onClick={() => setMenuState(false)}
-                  className="block hover:text-blue-600 transition-colors">
+                  className="block hover:text-blue-600 transition-colors"
+                >
                   {item.name}
                 </NavLink>
               </li>

@@ -63,7 +63,8 @@ const EditableNumber: React.FC<EditableNumberProps> = ({
       className={`w-16 text-right font-semibold text-accent-foreground cursor-pointer ${
         className || ''
       }`}
-      onClick={() => setIsEditing(true)}>
+      onClick={() => setIsEditing(true)}
+    >
       {value} {ending}
     </span>
   );

@@ -1,4 +1,10 @@
-import type { FileMetadata, FileUploadActions, FileUploadOptions, FileUploadState, FileWithPreview } from '@/types';
+import type {
+  FileMetadata,
+  FileUploadActions,
+  FileUploadOptions,
+  FileUploadState,
+  FileWithPreview
+} from '@/types';
 import {
   useCallback,
   useRef,
@@ -7,9 +13,6 @@ import {
   type DragEvent,
   type InputHTMLAttributes
 } from 'react';
-
-
-
 
 export const useFileUpload = (
   options: FileUploadOptions = {}
